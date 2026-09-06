@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HAVENLY HOME DECOR — Decoración del Hogar</title>
+  <meta name="description" content="Tienda online de decoración del hogar con estética moderna, elegante y minimalista. Tonos tierra, terracota y verde oliva.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23C06B45'/><text x='50' y='68' font-size='55' text-anchor='middle' fill='white' font-family='Georgia'>H</text></svg>">
+</head>
+<body>
+
+  <div id="site-topbar"></div>
+  <header id="site-header"></header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero__content">
+        <span class="hero__eyebrow">HAVENLY HOME DECOR</span>
+        <h1 data-i18n="hero.title"></h1>
+        <p data-i18n="hero.subtitle"></p>
+        <div class="hero__cta">
+          <a href="tienda.html" class="btn btn-primary" data-i18n="hero.cta1"></a>
+          <a href="tienda.html" class="btn btn-outline" style="border-color:#fff;color:#fff" data-i18n="hero.cta2"></a>
+        </div>
+        <div class="hero__badges">
+          <span class="hero__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg><span data-i18n="hero.b1"></span></span>
+          <span class="hero__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 20A7 7 0 0 1 4 13c0-5 4-9 16-10-1 12-5 16-9 17z"/></svg><span data-i18n="hero.b2"></span></span>
+          <span class="hero__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5z"/></svg><span data-i18n="hero.b3"></span></span>
+          <span class="hero__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14v-3a8 8 0 0 1 16 0v3"/><rect x="2" y="14" width="4" height="6" rx="2"/><rect x="18" y="14" width="4" height="6" rx="2"/></svg><span data-i18n="hero.b4"></span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BANNER OFERTA -->
+  <section class="offerbar">
+    <div class="container offerbar__inner">
+      <span class="offerbar__text"><span data-i18n="offer.text"></span> <strong>BIENVENIDO15</strong></span>
+      <a href="tienda.html" class="btn btn-light" data-i18n="offer.cta"></a>
+    </div>
+  </section>
+
+  <!-- CATEGORÍAS -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">HAVENLY</span>
+        <h2 data-i18n="shop.title"></h2>
+        <p data-i18n="shop.subtitle"></p>
+      </div>
+      <div class="cats" id="categories-grid"></div>
+    </div>
+  </section>
+
+  <!-- MÁS VENDIDOS -->
+  <section class="section" style="background:#fff">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">✦</span>
+        <h2 data-i18n="best.title"></h2>
+        <p data-i18n="best.subtitle"></p>
+      </div>
+      <div class="products-grid" id="best-sellers"></div>
+    </div>
+  </section>
+
+  <!-- NOVEDADES -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">✦</span>
+        <h2 data-i18n="new.title"></h2>
+        <p data-i18n="new.subtitle"></p>
+      </div>
+      <div class="products-grid" id="new-arrivals"></div>
+    </div>
+  </section>
+
+  <!-- BANNERS PROMOCIONALES -->
+  <section class="section" style="padding-top:0">
+    <div class="container banners">
+      <div class="banner banner--1">
+        <div class="banner__content">
+          <h3 data-i18n="banner1.title"></h3>
+          <p data-i18n="banner1.subtitle"></p>
+          <a href="tienda.html?cat=sala" class="btn btn-light btn-sm" data-i18n="banner1.cta"></a>
+        </div>
+      </div>
+      <div class="banner banner--2">
+        <div class="banner__content">
+          <h3 data-i18n="banner2.title"></h3>
+          <p data-i18n="banner2.subtitle"></p>
+          <a href="tienda.html?filtro=nuevo" class="btn btn-light btn-sm" data-i18n="banner2.cta"></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIOS -->
+  <section class="section testi">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">✦</span>
+        <h2 data-i18n="testi.title"></h2>
+        <p data-i18n="testi.subtitle"></p>
+      </div>
+      <div class="testi__carousel">
+        <div class="testi__track"><div class="testi__slides" id="testi-slides"></div></div>
+        <div class="testi__nav" id="testi-nav"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONFIANZA -->
+  <section class="section" id="nosotros" style="background:#fff">
+    <div class="container">
+      <div class="trust">
+        <div class="trust__item">
+          <div class="trust__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4h13v12H1z"/><path d="M14 8h4l3 4v4h-7z"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/></svg></div>
+          <h4 data-i18n="trust.free"></h4>
+          <p data-i18n="trust.free.d"></p>
+        </div>
+        <div class="trust__item">
+          <div class="trust__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg></div>
+          <h4 data-i18n="trust.returns"></h4>
+          <p data-i18n="trust.returns.d"></p>
+        </div>
+        <div class="trust__item">
+          <div class="trust__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div>
+          <h4 data-i18n="trust.pay"></h4>
+          <p data-i18n="trust.pay.d"></p>
+        </div>
+        <div class="trust__item">
+          <div class="trust__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v-3a8 8 0 0 1 16 0v3"/><rect x="2" y="14" width="4" height="6" rx="2"/><rect x="18" y="14" width="4" height="6" rx="2"/><path d="M20 20a4 4 0 0 1-4 3h-3"/></svg></div>
+          <h4 data-i18n="trust.support"></h4>
+          <p data-i18n="trust.support.d"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="site-footer"></footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    window.__renderPage = function () {
+      const catsGrid = document.getElementById("categories-grid");
+      catsGrid.innerHTML = CATEGORIES.map((c) => `
+        <a class="cat" href="tienda.html?cat=${c.key}">
+          <span class="cat__icon">${c.icon}</span>
+          <span class="cat__name">${catName(c.key)}</span>
+        </a>`).join("");
+
+      const best = PRODUCTS.filter((p) => p.bestSeller).slice(0, 6);
+      document.getElementById("best-sellers").innerHTML = best.map((p) => productCardHTML(p)).join("");
+
+      const fresh = PRODUCTS.filter((p) => p.newArrival).slice(0, 6);
+      document.getElementById("new-arrivals").innerHTML = fresh.map((p) => productCardHTML(p)).join("");
+
+      const slides = document.getElementById("testi-slides");
+      slides.innerHTML = TESTIMONIALS.map((tm) => `
+        <div class="testi__slide">
+          <div class="testi__card">
+            <div class="testi__stars">${"★".repeat(tm.rating)}${"☆".repeat(5 - tm.rating)}</div>
+            <p class="testi__text">“${LANG === "es" ? tm.text : tm.textEn}”</p>
+            <div class="testi__who">
+              <span class="testi__avatar">${tm.initials}</span>
+              <div>
+                <div class="testi__name">${tm.name}</div>
+                <div class="testi__loc">${tm.location}</div>
+              </div>
+            </div>
+          </div>
+        </div>`).join("");
+      const nav = document.getElementById("testi-nav");
+      nav.innerHTML = TESTIMONIALS.map((_, i) => `<button class="testi__dot ${i === 0 ? "active" : ""}" data-dot="${i}" aria-label="Reseña ${i + 1}"></button>`).join("");
+
+      bindProductCards();
+      bindTestimonials();
+    };
+
+    let testiIndex = 0;
+    function bindTestimonials() {
+      const track = document.querySelector(".testi__slides");
+      const dots = document.querySelectorAll("[data-dot]");
+      function go(i) {
+        testiIndex = i;
+        track.style.transform = `translateX(-${i * 100}%)`;
+        dots.forEach((d, j) => d.classList.toggle("active", j === i));
+      }
+      dots.forEach((d) => d.addEventListener("click", () => go(+d.getAttribute("data-dot"))));
+      setInterval(() => go((testiIndex + 1) % TESTIMONIALS.length), 6000);
+    }
+
+    window.__renderPage();
+  </script>
+</body>
+</html>

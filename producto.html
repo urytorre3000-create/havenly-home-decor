@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Producto — HAVENLY HOME DECOR</title>
+  <meta name="description" content="Detalle de producto: galería de imágenes, descripción y reseñas.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23C06B45'/><text x='50' y='68' font-size='55' text-anchor='middle' fill='white' font-family='Georgia'>H</text></svg>">
+</head>
+<body>
+
+  <div id="site-topbar"></div>
+  <header id="site-header"></header>
+
+  <section class="section" style="padding-top:44px">
+    <div class="container">
+      <div class="breadcrumb" style="margin-bottom:26px">
+        <a href="index.html">Home</a> / <a href="tienda.html" data-i18n="nav.shop"></a> / <span id="crumb-name"></span>
+      </div>
+
+      <div class="pdp" id="pdp"></div>
+
+      <div style="margin-top:70px">
+        <div class="section-head" style="margin-bottom:34px">
+          <span class="eyebrow">✦</span>
+          <h2 data-i18n="detail.related"></h2>
+        </div>
+        <div class="products-grid" id="related"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="site-footer"></footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    const pid = new URLSearchParams(location.search).get("id");
+    const product = getProduct(pid) || PRODUCTS[0];
+
+    const REVIEWS = [
+      { name: "Valentina S.", rating: 5, date: "2026-05-12", text: "Hermoso producto, la calidad es excelente y llegó muy bien empacado. Superó mis expectativas.", textEn: "Beautiful product, excellent quality and very well packed. Exceeded my expectations." },
+      { name: "Ricardo M.", rating: 4, date: "2026-04-28", text: "Muy bonito y combina perfecto con mi decoración. El envío tardó un poco pero valió la pena.", textEn: "Very nice and matches my decor perfectly. Shipping took a while but it was worth it." },
+      { name: "Daniela P.", rating: 5, date: "2026-03-15", text: "Me encanta. Los tonos tierra son tal cual las fotos. Atención al cliente de 10.", textEn: "I love it. The earthy tones are exactly as pictured. Customer service is a 10." }
+    ];
+
+    let qty = 1;
+    let activeImg = 0;
+
+    function renderPDP() {
+      const name = LANG === "es" ? product.name : product.nameEn;
+      const desc = LANG === "es" ? product.desc : product.descEn;
+      const short = LANG === "es" ? product.short : product.shortEn;
+      const out = product.stock <= 0;
+      document.getElementById("crumb-name").textContent = name;
+      document.title = name + " — HAVENLY HOME DECOR";
+
+      const el = document.getElementById("pdp");
+      el.innerHTML = `
+        <div class="pdp__gallery">
+          <div class="pdp__main"><img src="${product.gallery[0]}" alt="${name}" id="main-img"></div>
+          <div class="pdp__thumbs">
+            ${product.gallery.map((g, i) => `<button class="pdp__thumb ${i === 0 ? "active" : ""}" data-img="${i}"><img src="${g}" alt="${name} ${i + 1}"></button>`).join("")}
+          </div>
+        </div>
+        <div class="pdp__info">
+          <span class="card__cat">${catName(product.category)}</span>
+          <h1>${name}</h1>
+          <div class="pdp__rating">${starsHTML(product.rating)} <span>${product.rating} · ${product.reviews} ${LANG === "es" ? "reseñas" : "reviews"}</span></div>
+          <div class="pdp__price">
+            <span class="price">${money(product.price)}</span>
+            ${product.oldPrice ? `<span class="price-old">${money(product.oldPrice)}</span>` : ""}
+            ${product.badge === "oferta" ? `<span class="card__badge sale" style="position:static" data-i18n="badge.sale"></span>` : ""}
+          </div>
+          <p class="pdp__desc">${short}</p>
+          <div class="pdp__meta">
+            <span><strong data-i18n="detail.stock"></strong>: ${out ? (LANG === "es" ? "Agotado" : "Out of stock") : product.stock}</span>
+            <span><strong data-i18n="detail.sku"></strong>: HV-${product.id.toUpperCase().slice(0, 6)}</span>
+            <span><strong data-i18n="detail.category"></strong>: ${catName(product.category)}</span>
+          </div>
+          <div class="pdp__actions">
+            <div class="qty">
+              <button id="qty-minus" aria-label="Menos">−</button>
+              <span id="qty-val">1</span>
+              <button id="qty-plus" aria-label="Más">+</button>
+            </div>
+            <button class="btn btn-primary" id="pdp-add" ${out ? "disabled style='opacity:.5;pointer-events:none'" : ""} data-i18n="product.add"></button>
+            <button class="btn btn-outline" id="pdp-buy" ${out ? "disabled style='opacity:.5;pointer-events:none'" : ""} data-i18n="detail.buy"></button>
+            <button class="icon-btn" id="pdp-fav" style="border:1px solid var(--line)" aria-label="Favorito">${isFav(product.id) ? '<svg viewBox="0 0 24 24" fill="currentColor" style="width:21px;height:21px;color:var(--terracotta)"><path d="M12 21C7 16.5 3 13 3 8.8 3 6 5.2 4 7.8 4c1.7 0 3.2.9 4.2 2.3C13 4.9 14.5 4 16.2 4 18.8 4 21 6 21 8.8c0 4.2-4 7.7-9 12.2z"/></svg>' : icon("heart")}</button>
+          </div>
+          <div class="pdp__tabs">
+            <div class="pdp__tab-btns">
+              <button class="pdp__tab-btn active" data-tab="desc" data-i18n="detail.desc"></button>
+              <button class="pdp__tab-btn" data-tab="rev" data-i18n="detail.reviews"></button>
+            </div>
+            <div class="pdp__tab active" id="tab-desc"><p style="color:var(--muted)">${desc}</p></div>
+            <div class="pdp__tab" id="tab-rev">
+              ${REVIEWS.map((r) => `
+                <div class="review">
+                  <div class="review__head">
+                    <span class="review__avatar">${r.name[0]}</span>
+                    <div>
+                      <div class="review__name">${r.name}</div>
+                      <div class="review__date">${r.date} · ${"★".repeat(r.rating)}${"☆".repeat(5 - r.rating)}</div>
+                    </div>
+                  </div>
+                  <p class="review__text">${LANG === "es" ? r.text : r.textEn}</p>
+                </div>`).join("")}
+            </div>
+          </div>
+        </div>`;
+
+      const related = PRODUCTS.filter((p) => p.category === product.category && p.id !== product.id)
+        .concat(PRODUCTS.filter((p) => p.category !== product.category && p.id !== product.id))
+        .slice(0, 3);
+      document.getElementById("related").innerHTML = related.map((p) => productCardHTML(p)).join("");
+
+      applyLang();
+      bindPDP();
+      bindProductCards();
+    }
+
+    function bindPDP() {
+      document.querySelectorAll("[data-img]").forEach((th) => th.addEventListener("click", () => {
+        activeImg = +th.getAttribute("data-img");
+        document.getElementById("main-img").src = product.gallery[activeImg];
+        document.querySelectorAll("[data-img]").forEach((t) => t.classList.toggle("active", t === th));
+      }));
+      document.getElementById("qty-plus").addEventListener("click", () => { qty++; document.getElementById("qty-val").textContent = qty; });
+      document.getElementById("qty-minus").addEventListener("click", () => { qty = Math.max(1, qty - 1); document.getElementById("qty-val").textContent = qty; });
+      document.getElementById("pdp-add").addEventListener("click", () => addToCart(product.id, qty));
+      document.getElementById("pdp-buy").addEventListener("click", () => { addToCart(product.id, qty); location.href = "checkout.html"; });
+      document.getElementById("pdp-fav").addEventListener("click", () => { toggleFav(product.id); renderPDP(); });
+      document.querySelectorAll("[data-tab]").forEach((b) => b.addEventListener("click", () => {
+        document.querySelectorAll("[data-tab]").forEach((x) => x.classList.toggle("active", x === b));
+        document.querySelectorAll(".pdp__tab").forEach((x) => x.classList.toggle("active", x.id === "tab-" + b.getAttribute("data-tab")));
+      }));
+    }
+
+    window.__renderPage = renderPDP;
+    renderPDP();
+  </script>
+</body>
+</html>

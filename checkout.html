@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finalizar Compra — HAVENLY HOME DECOR</title>
+  <meta name="description" content="Checkout seguro con Mercado Pago, PayPal, Stripe, Binance Pay, Zelle y transferencia bancaria.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23C06B45'/><text x='50' y='68' font-size='55' text-anchor='middle' fill='white' font-family='Georgia'>H</text></svg>">
+</head>
+<body>
+
+  <div id="site-topbar"></div>
+  <header id="site-header"></header>
+
+  <section class="page-head">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / <a href="carrito.html" data-i18n="cart.title"></a> / <span data-i18n="checkout.title"></span></div>
+      <h1 data-i18n="checkout.title"></h1>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:40px">
+    <div class="container" id="checkout-root"></div>
+  </section>
+
+  <footer id="site-footer"></footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    const PAY_METHODS = [
+      { id: "card", icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#6B705C" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>', nameKey: "checkout.card", descKey: "checkout.card.d" },
+      { id: "mp", icon: '<span style="background:#009EE3;color:#fff;border-radius:6px;padding:2px 8px;font-weight:800;font-size:.82rem;letter-spacing:.04em">MP</span>', nameKey: "checkout.mp", descKey: "checkout.mp.d" },
+      { id: "pp", icon: '<span style="background:#003087;color:#fff;border-radius:6px;padding:2px 8px;font-weight:800;font-size:.82rem">P</span>', nameKey: "checkout.pp", descKey: "checkout.pp.d" },
+      { id: "binance", icon: '<span style="background:#F3BA2F;color:#0B0E11;border-radius:6px;padding:2px 8px;font-weight:800;font-size:.82rem">₿</span>', nameKey: "checkout.binance", descKey: "checkout.binance.d" },
+      { id: "zelle", icon: '<span style="background:#6D1ED4;color:#fff;border-radius:6px;padding:2px 8px;font-weight:800;font-size:.82rem">Z</span>', nameKey: "checkout.zelle", descKey: "checkout.zelle.d" },
+      { id: "transfer", icon: '<span style="background:#4F5544;color:#fff;border-radius:6px;padding:2px 8px;font-weight:800;font-size:.82rem">Bs</span>', nameKey: "checkout.transfer", descKey: "checkout.transfer.d" }
+    ];
+
+    function renderCheckout() {
+      const root = document.getElementById("checkout-root");
+      if (!CART.length) {
+        root.innerHTML = `
+          <div class="empty-cart">
+            <div class="emoji"><svg viewBox="0 0 24 24" width="56" height="56" fill="none" stroke="#C06B45" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.6"/><circle cx="17" cy="20" r="1.6"/><path d="M3 3h2l2.6 12.4a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.6L21 7H6"/></svg></div>
+            <h2 data-i18n="cart.empty"></h2>
+            <p data-i18n="cart.empty.d"></p>
+            <a href="tienda.html" class="btn btn-primary" data-i18n="cart.continue"></a>
+          </div>`;
+        applyLang();
+        return;
+      }
+
+      const ship = cartShipping();
+      root.innerHTML = `
+        <form id="checkout-form" class="checkout-layout" novalidate>
+          <div>
+            <div class="form-card">
+              <h3><span class="step">1</span> <span data-i18n="checkout.personal"></span></h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label data-i18n="checkout.name"></label>
+                  <input type="text" id="f-name" required autocomplete="name">
+                </div>
+                <div class="form-group">
+                  <label data-i18n="checkout.email"></label>
+                  <input type="email" id="f-email" required autocomplete="email">
+                </div>
+              </div>
+              <div class="form-group">
+                <label data-i18n="checkout.phone"></label>
+                <input type="tel" id="f-phone" required autocomplete="tel" placeholder="+58 414 000 0000">
+              </div>
+            </div>
+
+            <div class="form-card">
+              <h3><span class="step">2</span> <span data-i18n="checkout.shipping"></span></h3>
+              <div class="form-group">
+                <label data-i18n="checkout.address"></label>
+                <input type="text" id="f-address" required autocomplete="street-address">
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label data-i18n="checkout.city"></label>
+                  <input type="text" id="f-city" required>
+                </div>
+                <div class="form-group">
+                  <label data-i18n="checkout.state"></label>
+                  <select id="f-state">
+                    <option>Distrito Capital</option><option>Miranda</option><option>Zulia</option>
+                    <option>Carabobo</option><option>Lara</option><option>Aragua</option>
+                    <option>Anzoátegui</option><option>Bolívar</option><option>Falcón</option>
+                    <option>Mérida</option><option>Táchira</option><option>Otro</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label data-i18n="checkout.zip"></label>
+                <input type="text" id="f-zip" placeholder="1010">
+              </div>
+            </div>
+
+            <div class="form-card">
+              <h3><span class="step">3</span> <span data-i18n="checkout.payment"></span></h3>
+              <p style="color:var(--muted);font-size:.88rem;margin-bottom:16px" data-i18n="checkout.pay.desc"></p>
+              <div class="pay-options">
+                ${PAY_METHODS.map((m, i) => `
+                  <label class="pay-option ${i === 0 ? "selected" : ""}">
+                    <input type="radio" name="pay" value="${m.id}" ${i === 0 ? "checked" : ""}>
+                    <span class="pay-option__icon">${m.icon}</span>
+                    <span>
+                      <span class="pay-option__name" data-i18n="${m.nameKey}"></span><br>
+                      <span class="pay-option__desc" data-i18n="${m.descKey}"></span>
+                    </span>
+                  </label>`).join("")}
+              </div>
+              <div class="pay-detail show" id="pay-detail"></div>
+            </div>
+          </div>
+
+          <aside class="summary">
+            <h3 data-i18n="cart.summary"></h3>
+            <div id="summary-items"></div>
+            <div class="summary__row"><span data-i18n="cart.subtotal"></span><span>${money(cartSubtotal())}</span></div>
+            ${PROMO_APPLIED ? `<div class="summary__row"><span>${LANG === "es" ? "Descuento (15%)" : "Discount (15%)"}</span><span style="color:var(--olive)">−${money(cartDiscount())}</span></div>` : ""}
+            <div class="summary__row"><span data-i18n="cart.shipping"></span><span class="${ship === 0 ? "free" : ""}">${ship === 0 ? t("cart.free") : money(ship)}</span></div>
+            <div class="summary__row"><span data-i18n="cart.tax"></span><span>${money(cartTax())}</span></div>
+            <div class="summary__row total"><span data-i18n="cart.grand"></span><span>${money(cartGrand())}</span></div>
+            <button type="submit" class="btn btn-primary btn-block" style="margin-top:18px" data-i18n="checkout.place"></button>
+            <p style="font-size:.76rem;color:var(--muted);margin-top:12px;text-align:center" data-i18n="checkout.note"></p>
+          </aside>
+        </form>`;
+
+      const items = CART.map((c) => {
+        const p = getProduct(c.id);
+        return `<div class="summary__row" style="font-size:.86rem"><span>${(LANG === "es" ? p.name : p.nameEn)} × ${c.qty}</span><span>${money(p.price * c.qty)}</span></div>`;
+      }).join("");
+      document.getElementById("summary-items").innerHTML = items;
+
+      applyLang();
+      bindCheckout();
+    }
+
+    function payDetailHTML(method) {
+      const es = LANG === "es";
+      const details = {
+        card: `<div class="form-row">
+            <div class="form-group"><label>${es ? "Número de tarjeta" : "Card number"}</label><input type="text" placeholder="4242 4242 4242 4242" id="card-num"></div>
+            <div class="form-group"><label>${es ? "Titular" : "Cardholder"}</label><input type="text" placeholder="NOMBRE APELLIDO"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>${es ? "Vencimiento" : "Expiry"}</label><input type="text" placeholder="MM/AA"></div>
+            <div class="form-group"><label>CVC</label><input type="text" placeholder="123"></div>
+          </div>
+          <p class="hint">${es ? "Procesado de forma segura por Stripe (modo demo)." : "Securely processed by Stripe (demo mode)."}</p>`,
+        mp: `<p>${es ? "Al confirmar serás redirigido a Mercado Pago para completar tu pago de forma segura." : "After confirming you will be redirected to Mercado Pago to complete your payment securely."}</p>`,
+        pp: `<p>${es ? "Al confirmar serás redirigido a PayPal para completar tu pago internacional." : "After confirming you will be redirected to PayPal to complete your international payment."}</p>`,
+        binance: `<p>${es ? "Transfiere USDT a la siguiente dirección y envía el comprobante por WhatsApp:" : "Transfer USDT to the following address and send the receipt via WhatsApp:"}</p>
+          <p style="margin-top:8px"><code>0xHavenlyUSDT...BEP20</code></p>
+          <p class="hint">${es ? "Red: BSC (BEP-20) · Confirmaremos tu pedido al recibir el pago." : "Network: BSC (BEP-20) · We will confirm your order upon receiving payment."}</p>`,
+        zelle: `<p>${es ? "Envía tu pago por Zelle a:" : "Send your Zelle payment to:"}</p>
+          <p style="margin-top:8px"><code>pagos@havenlydecor.com</code></p>
+          <p class="hint">${es ? "Titular: HAVENLY HOME DECOR C.A. · Incluye tu número de pedido en la nota." : "Holder: HAVENLY HOME DECOR C.A. · Include your order number in the note."}</p>`,
+        transfer: `<p>${es ? "Pago móvil / transferencia en bolívares:" : "Mobile payment / bank transfer in bolivars:"}</p>
+          <p style="margin-top:8px"><code>Banco: 0102 · C.I. V-12.345.678 · Telf. 0414-650-3348</code></p>
+          <p class="hint">${es ? "El monto en Bs se calcula a la tasa del día. Te contactaremos para confirmar." : "The amount in Bs is calculated at the daily rate. We will contact you to confirm."}</p>`
+      };
+      return details[method] || "";
+    }
+
+    function bindCheckout() {
+      const opts = document.querySelectorAll('input[name="pay"]');
+      const detail = document.getElementById("pay-detail");
+      function updateDetail() {
+        const method = document.querySelector('input[name="pay"]:checked').value;
+        detail.innerHTML = payDetailHTML(method);
+        detail.classList.add("show");
+        document.querySelectorAll(".pay-option").forEach((o) => {
+          o.classList.toggle("selected", o.querySelector("input").checked);
+        });
+      }
+      opts.forEach((r) => r.addEventListener("change", updateDetail));
+      updateDetail();
+
+      document.getElementById("checkout-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const required = ["f-name", "f-email", "f-phone", "f-address", "f-city"];
+        let ok = true;
+        required.forEach((id) => {
+          const el = document.getElementById(id);
+          if (!el.value.trim()) { el.style.borderColor = "var(--danger)"; ok = false; }
+          else el.style.borderColor = "";
+        });
+        const email = document.getElementById("f-email").value;
+        if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          document.getElementById("f-email").style.borderColor = "var(--danger)";
+          ok = false;
+        }
+        if (!ok) { toast(t("checkout.required")); return; }
+
+        const orderNo = "HV-" + Date.now().toString().slice(-8);
+        const method = document.querySelector('input[name="pay"]:checked').value;
+        const methodName = PAY_METHODS.find((m) => m.id === method).nameKey;
+        showSuccess(orderNo, email, methodName);
+      });
+    }
+
+    function showSuccess(orderNo, email, methodName) {
+      CART = [];
+      saveCart();
+      updateCartBadges();
+      const root = document.getElementById("checkout-root");
+      root.innerHTML = `
+        <div class="success-card">
+          <div class="check">${icon("check")}</div>
+          <h1 data-i18n="success.title"></h1>
+          <p data-i18n="success.sub"></p>
+          <div class="order-no" data-i18n="success.order"></div>
+          <div style="font-size:1.3rem;font-weight:700;letter-spacing:.08em;margin-bottom:6px">${orderNo}</div>
+          <p style="font-size:.86rem">${t("success.email")}: <strong>${email}</strong></p>
+          <p style="font-size:.86rem;margin-top:6px">${LANG === "es" ? "Método de pago" : "Payment method"}: <strong data-i18n="${methodName}"></strong></p>
+          <a href="tienda.html" class="btn btn-primary" style="margin-top:22px" data-i18n="success.back"></a>
+        </div>`;
+      applyLang();
+    }
+
+    window.__renderPage = renderCheckout;
+    renderCheckout();
+  </script>
+</body>
+</html>

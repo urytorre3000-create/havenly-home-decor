@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrito — HAVENLY HOME DECOR</title>
+  <meta name="description" content="Tu carrito de compras.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%23C06B45'/><text x='50' y='68' font-size='55' text-anchor='middle' fill='white' font-family='Georgia'>H</text></svg>">
+</head>
+<body>
+
+  <div id="site-topbar"></div>
+  <header id="site-header"></header>
+
+  <section class="page-head">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / <span data-i18n="cart.title"></span></div>
+      <h1 data-i18n="cart.title"></h1>
+      <p id="cart-subhead"></p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:40px">
+    <div class="container">
+      <div id="cart-content"></div>
+    </div>
+  </section>
+
+  <footer id="site-footer"></footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    function renderCart() {
+      const wrap = document.getElementById("cart-content");
+      document.getElementById("cart-subhead").textContent = `${cartCount()} ${t("cart.count")}`;
+
+      if (!CART.length) {
+        wrap.innerHTML = `
+          <div class="empty-cart">
+            <div class="emoji"><svg viewBox="0 0 24 24" width="56" height="56" fill="none" stroke="#C06B45" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.6"/><circle cx="17" cy="20" r="1.6"/><path d="M3 3h2l2.6 12.4a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.6L21 7H6"/></svg></div>
+            <h2 data-i18n="cart.empty"></h2>
+            <p data-i18n="cart.empty.d"></p>
+            <a href="tienda.html" class="btn btn-primary" data-i18n="cart.continue"></a>
+          </div>`;
+        applyLang();
+        return;
+      }
+
+      const items = CART.map((c) => {
+        const p = getProduct(c.id);
+        if (!p) return "";
+        const name = LANG === "es" ? p.name : p.nameEn;
+        return `
+        <div class="cart-item" data-id="${p.id}">
+          <a href="producto.html?id=${p.id}"><img class="cart-item__img" src="${p.image}" alt="${name}"></a>
+          <div>
+            <div class="cart-item__name">${name}</div>
+            <div class="cart-item__meta">${catName(p.category)} · ${money(p.price)}</div>
+          </div>
+          <div class="cart-item__right">
+            <div class="qty">
+              <button data-minus="${p.id}" aria-label="Menos">−</button>
+              <span>${c.qty}</span>
+              <button data-plus="${p.id}" aria-label="Más">+</button>
+            </div>
+            <span class="cart-item__price">${money(p.price * c.qty)}</span>
+            <button class="cart-item__remove" data-remove="${p.id}">${icon("trash")} <span data-i18n="cart.remove"></span></button>
+          </div>
+        </div>`;
+      }).join("");
+
+      const ship = cartShipping();
+      wrap.innerHTML = `
+        <div class="cart-layout">
+          <div class="cart-items">${items}</div>
+          <aside class="summary">
+            <h3 data-i18n="cart.summary"></h3>
+            <div class="promo">
+              <input type="text" id="promo-input" placeholder="${PROMO_CODE}">
+              <button id="promo-btn" data-i18n="cart.apply"></button>
+            </div>
+            <div class="promo-msg" id="promo-msg"></div>
+            <div class="summary__row"><span data-i18n="cart.subtotal"></span><span>${money(cartSubtotal())}</span></div>
+            ${PROMO_APPLIED ? `<div class="summary__row"><span>${LANG === "es" ? "Descuento (15%)" : "Discount (15%)"}</span><span style="color:var(--olive)">−${money(cartDiscount())}</span></div>` : ""}
+            <div class="summary__row"><span data-i18n="cart.shipping"></span><span class="${ship === 0 ? "free" : ""}">${ship === 0 ? t("cart.free") : money(ship)}</span></div>
+            <div class="summary__row"><span data-i18n="cart.tax"></span><span>${money(cartTax())}</span></div>
+            <div class="summary__row total"><span data-i18n="cart.grand"></span><span>${money(cartGrand())}</span></div>
+            <a href="checkout.html" class="btn btn-primary btn-block" style="margin-top:18px" data-i18n="cart.checkout"></a>
+            <a href="tienda.html" class="btn btn-outline btn-block" style="margin-top:10px" data-i18n="cart.continue"></a>
+          </aside>
+        </div>`;
+
+      applyLang();
+      bindCartEvents();
+    }
+
+    function bindCartEvents() {
+      document.querySelectorAll("[data-plus]").forEach((b) => b.addEventListener("click", () => {
+        const id = b.getAttribute("data-plus");
+        const item = CART.find((c) => c.id === id);
+        setCartQty(id, item.qty + 1);
+        renderCart();
+      }));
+      document.querySelectorAll("[data-minus]").forEach((b) => b.addEventListener("click", () => {
+        const id = b.getAttribute("data-minus");
+        const item = CART.find((c) => c.id === id);
+        if (item.qty <= 1) removeFromCart(id);
+        else setCartQty(id, item.qty - 1);
+        renderCart();
+      }));
+      document.querySelectorAll("[data-remove]").forEach((b) => b.addEventListener("click", () => {
+        removeFromCart(b.getAttribute("data-remove"));
+        renderCart();
+      }));
+      const promoBtn = document.getElementById("promo-btn");
+      if (promoBtn) promoBtn.addEventListener("click", () => {
+        const val = document.getElementById("promo-input").value.trim().toUpperCase();
+        const msg = document.getElementById("promo-msg");
+        if (val === PROMO_CODE) {
+          PROMO_APPLIED = true;
+          msg.className = "promo-msg ok";
+          msg.textContent = t("cart.code.ok");
+        } else {
+          PROMO_APPLIED = false;
+          msg.className = "promo-msg bad";
+          msg.textContent = t("cart.code.bad");
+        }
+        renderCart();
+        if (PROMO_APPLIED) document.getElementById("promo-msg").className = "promo-msg ok";
+      });
+    }
+
+    window.__renderPage = renderCart;
+    renderCart();
+  </script>
+</body>
+</html>
